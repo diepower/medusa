@@ -49,7 +49,7 @@ Object {
   "cancelled_at": null,
   "confirmed_at": null,
   "context": Object {},
-  "created_at": "2022-05-16T16:57:10.273Z",
+  "created_at": Any<String>,
   "created_by": "admin_user",
   "deleted_at": null,
   "id": "job_1",
@@ -57,7 +57,7 @@ Object {
   "result": null,
   "status": "created",
   "type": "batch_1",
-  "updated_at": "2022-05-16T16:57:10.273Z",
+  "updated_at": Any<String>,
 }
 `;
 
