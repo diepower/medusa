@@ -33,30 +33,10 @@ describe("/admin/batch", () => {
     medusaProcess.kill()
   })
 
-  describe("POST /admin/batch/:id/complete", () => {
-    beforeEach(async () => {
+  describe("POST /admin/batch/", () => {
+    beforeEach(async() => {
       try {
         await adminSeeder(dbConnection)
-        await userSeeder(dbConnection)
-
-        await simpleBatchJobFactory(dbConnection, {
-          id: "job_1",
-          type: "batch_1",
-          created_by: "admin_user",
-          status: "created",
-        })
-        await simpleBatchJobFactory(dbConnection, {
-          id: "job_2",
-          type: "batch_1",
-          status: "awaiting_confirmation",
-          created_by: "admin_user",
-        })
-        await simpleBatchJobFactory(dbConnection, {
-          id: "job_3",
-          type: "batch_1",
-          status: "awaiting_confirmation",
-          created_by: "member-user",
-        })
       } catch (err) {
         console.log(err)
         throw err
@@ -66,53 +46,6 @@ describe("/admin/batch", () => {
     afterEach(async () => {
       const db = useDb()
       await db.teardown()
-    })
-
-    it("Requests completion of batch job created by the user", async () => {
-      const api = useApi()
-
-      const jobId = "job_2"
-
-      const response = await api.post(
-        `/admin/batch/${jobId}/complete`,
-        {},
-        adminReqConfig
-      )
-
-      expect(response.status).toEqual(200)
-      expect(response.data.batch_job).toMatchSnapshot({
-        created_at: expect.any(String),
-        updated_at: expect.any(String),
-        confirmed_at: null,
-        status: "awaiting_confirmation",
-      })
-    })
-
-    it("Fails to confirm a batch job created by a different user", async () => {
-      const api = useApi()
-
-      const jobId = "job_3"
-
-      await api
-        .post(`/admin/batch/${jobId}/complete`, {}, adminReqConfig)
-        .catch((err) => {
-          expect(err.response.status).toEqual(400)
-          expect(err.response.data.type).toEqual("not_allowed")
-          expect(err.response.data.message).toEqual(
-            "Cannot confirm batch jobs created by other users"
-          )
-        })
-    })
-  })
-
-  describe("POST /admin/batch/", () => {
-    beforeEach(async() => {
-      try {
-        await adminSeeder(dbConnection)
-      } catch (err) {
-        console.log(err)
-        throw err
-      }
     })
 
     it("Creates a batch job", async() => {
@@ -138,7 +71,7 @@ describe("/admin/batch", () => {
     })
   })
 
-  describe("GET /admin/batch/id", () => {
+  describe("GET /admin/batch/:id", () => {
     beforeEach(async () => {
       try {
         await adminSeeder(dbConnection)
